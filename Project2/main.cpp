@@ -1,43 +1,43 @@
 #include <GL/freeglut.h>
 #include <vector>
 #include <string> 
-#include <iostream> // Skor yazdýrmak için
+#include <iostream> 
 #include <cstdlib>
 
-// Pencere boyutlarý
+// Window size  
 int windowWidth = 800;
 int windowHeight = 600;
 
-// Pencere baþlýðý
+// Window title
 const char* windowTitle = "Space Shooter";
     
-// Oyuncu gemisi koordinatlarý 
+// Player's coordinates 
 float playerX = 400.0f;
 float playerY = 50.0f;
-float playerSpeed = 20.0f; // Oyuncu gemisinin hareket hýzý
-int playerHealth = 100; // Oyuncu saðlýk puaný
+float playerSpeed = 20.0f; // Player's speed 
+int playerHealth = 100; // Player's Health
 
-// Oyuncu mermi listesi
+// bullets
 std::vector<std::pair<float, float>> bullets;
-// Mermi hýzý
+// Bullet's speed 
 float bulletSpeed = 8.0f;
 
-// Düþman listesi
+// Enemies
 std::vector<std::pair<float, float>> enemies;
-// Düþman hýzý
+// Enemies speed 
 float enemySpeed = 3.0f;
 
-// Skor
+// Score
 int score = 0;
-int lastScore = 0; // En son yapýlan skor
+int lastScore = 0; // Last score
 
-// Çarpýþan düþmanýn indeksi
+// Collided Enemy Index 
 int collidedEnemyIndex = -1;
 
-// Oyun durumu
+// Game 
 bool gameOver = false;
 
-// Pencere oluþturma fonksiyonu
+// Create a window 
 void createWindow() {
     // Pencereyi oluþtur
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
@@ -45,7 +45,7 @@ void createWindow() {
     glutCreateWindow(windowTitle);
 }
 
-// Pencere yeniden boyutlandýrma fonksiyonu
+// Fixing Window size 
 void reshapeWindow(int width, int height) {
     windowWidth = width;
     windowHeight = height;
@@ -58,7 +58,7 @@ void reshapeWindow(int width, int height) {
     glLoadIdentity();
 }
 
-// Rastgele renk oluþturma fonksiyonu
+// create random colors
 void randomColor() {
     float r = static_cast<float>(rand()) / RAND_MAX; // Rastgele bir kýrmýzý bileþen
     float g = static_cast<float>(rand()) / RAND_MAX; // Rastgele bir yeþil bileþen
@@ -66,12 +66,12 @@ void randomColor() {
     glColor3f(r, g, b); // Rastgele renk ayarla
 }
 
-// Ana render fonksiyonu
+// Main render function
 void render() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
 
-    // Oyuncu gemisini çiz
+    // Drawing Player's ship 
     glColor3f(1.0f, 1.0f, 1.0f); // Beyaz renk
     glBegin(GL_QUADS);
     glVertex2f(playerX - 25, playerY); // Sol alt
@@ -80,7 +80,7 @@ void render() {
     glVertex2f(playerX - 25, playerY + 50); // Sol üst
     glEnd();
 
-    // Mermileri çiz
+    // Drawing Bullets
     glColor3f(1.0f, 0.0f, 0.0f); // Kýrmýzý renk
     glBegin(GL_QUAD_STRIP);
     for (const auto& bullet : bullets) {
@@ -91,34 +91,34 @@ void render() {
     }
     glEnd();
 
-    // Renk paleti
+    // Color pallet
     std::vector<std::vector<float>> colorPalette = {
-        {1.0f, 0.0f, 0.0f},  // Kýrmýzý
-        {0.0f, 1.0f, 0.0f},  // Yeþil
-        {0.0f, 0.0f, 1.0f},  // Mavi
-        {1.0f, 1.0f, 0.0f},  // Sarý
-        {1.0f, 0.0f, 1.0f},  // Pembe
+        {1.0f, 0.0f, 0.0f},  // Red
+        {0.0f, 1.0f, 0.0f},  // Green
+        {0.0f, 0.0f, 1.0f},  // Blue
+        {1.0f, 1.0f, 0.0f},  // Yellow
+        {1.0f, 0.0f, 1.0f},  // Pink
         {0.0f, 1.0f, 1.0f}   // Cyan
     };
 
-    // Düþmanlarý çiz
+    // Drawing enemies 
     for (size_t i = 0; i < enemies.size(); ++i) {
-        glBegin(GL_POLYGON); // POLYGON modunu kullan
+        glBegin(GL_POLYGON); // POLYGON mode
         const auto& enemy = enemies[i];
-        const auto& color = colorPalette[i % colorPalette.size()]; // Paletten bir renk seç
-        glColor3f(color[0], color[1], color[2]); // Seçilen rengi ayarla
-        glVertex2f(enemy.first, enemy.second - 20); // Alt orta
-        glVertex2f(enemy.first + 20, enemy.second + 10); // Sað alt
-        glVertex2f(enemy.first + 10, enemy.second + 30); // Sað üst
-        glVertex2f(enemy.first - 10, enemy.second + 30); // Sol üst
-        glVertex2f(enemy.first - 20, enemy.second + 10); // Sol alt
+        const auto& color = colorPalette[i % colorPalette.size()]; // Choose a color from palette 
+        glColor3f(color[0], color[1], color[2]); // setting the color 
+        glVertex2f(enemy.first, enemy.second - 20); // bottom mid 
+        glVertex2f(enemy.first + 20, enemy.second + 10); // bottom right 
+        glVertex2f(enemy.first + 10, enemy.second + 30); // up right
+        glVertex2f(enemy.first - 10, enemy.second + 30); // up left 
+        glVertex2f(enemy.first - 20, enemy.second + 10); // bottom left
         glEnd();
     }
 
 
 
-    // Saðlýk çubuðunu çiz
-    glColor3f(1.0f, 0.0f, 0.0f); // Kýrmýzý renk
+    // Health board 
+    glColor3f(1.0f, 0.0f, 0.0f); // Red color 
     glBegin(GL_QUADS);
     glVertex2f(10, windowHeight - 10); // Sol üst
     glVertex2f(10 + playerHealth * 2, windowHeight - 10); // Sað üst
@@ -149,9 +149,7 @@ void render() {
     }
 
     glutSwapBuffers();
-}
-
-
+}  
 
 // Ana güncelleme fonksiyonu
 void update(int value) {
