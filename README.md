@@ -63,12 +63,12 @@ Differences:
 <h3>Images From Game:</h3> 
 
   ![image](https://github.com/Gizemexe/OpenGL/assets/108283247/90635de4-5be0-48f6-b14b-96c8bdf9aa93)
-  (picture 1)
+  {picture 1}
 
   ![image](https://github.com/Gizemexe/OpenGL/assets/108283247/39078eab-bcc6-467d-a360-212e2fc967b5)
-  (picture 2)
+  {picture 2}
 
   ![image](https://github.com/Gizemexe/OpenGL/assets/108283247/045eb01a-4f0e-492a-8a22-2eb21d32f88f)
-  (picture 3)
+  {picture 3}
 
 
